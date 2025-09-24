@@ -29,8 +29,6 @@ public class Helper {
             System.out.println("The identity number is invalid.");
             return false;
         }
-
-
     }
     //getting date of birth from identity number
     public static LocalDate getDateOfBirth(String identityNumber) {
@@ -60,7 +58,6 @@ public class Helper {
 
         return LocalDate.of(year, month, day);
     }
-
     //calculate age from date of birth
     public static int calculateAgeFromDOB(LocalDate dob) {
         return Period.between(dob, LocalDate.now()).getYears();
@@ -95,15 +92,8 @@ public class Helper {
 
         return hasNumber && hasSpecialChar;
     }
-
     //validate doctor's license number  ,Example DR1234, dr987654, Dr0001
     public static boolean isValidDoctorLicense(String licenseNumber) {
         return licenseNumber != null && licenseNumber.matches("(?i)^DR\\d{4,6}$");
     }
-
-
-
-
-
-
 }

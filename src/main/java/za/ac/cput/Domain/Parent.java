@@ -1,7 +1,9 @@
 package za.ac.cput.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 
 import java.util.ArrayList;
@@ -11,9 +13,9 @@ import java.util.List;
 public class Parent extends User {
     private String address;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Child> children ;
-
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("parent")
+    private List<Child> children = new ArrayList<>();
 
     public Parent() {
 
@@ -29,10 +31,19 @@ public Parent(Builder builder) {
         this.username = builder.username;
         this.password = builder.password;
         this.role = builder.role;
+        this.children = builder.children;
 }
     public String getAddress() {
         return address;
     }
+    public List<Child> getChildren() {
+        return children;
+    }
+    public void setChildren(List<Child> children) {
+        this.children = children;
+    }
+
+
 
     @Override
     public String toString() {
@@ -46,6 +57,7 @@ public Parent(Builder builder) {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
+                ", childrenCount=" + (children != null ? children.size() : 0) +
                 '}';
     }
 
@@ -59,6 +71,7 @@ public Parent(Builder builder) {
         private String username;
         private String password;
         private Role role;
+        private List<Child> children = new ArrayList<>();
 
 
         public Builder setAddress(String address) {
@@ -105,6 +118,8 @@ public Parent(Builder builder) {
             this.role = role;
             return this;
         }
+
+
 public Builder copy(Parent parent) {
             this.address = parent.address;
             this.userId = parent.userId;
@@ -115,6 +130,7 @@ public Builder copy(Parent parent) {
             this.username = parent.username;
             this.password = parent.password;
             this.role = parent.role;
+            this.children = parent.children;
             return this;
 }
 public Parent build() {
