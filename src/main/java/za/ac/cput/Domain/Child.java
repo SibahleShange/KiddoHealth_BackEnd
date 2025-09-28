@@ -1,32 +1,34 @@
 package za.ac.cput.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
- private long childId;
- private String identityNumber;
- private String name;
- private String surname;
- private int age;
- private String gender;
- private LocalDate dateOfBirth;
+      private long childId;
+      private String identityNumber;
+      private String name;
+      private String surname;
+      private int age;
+      private String gender;
+      private LocalDate dateOfBirth;
+      private String profilePictureUrl;
 
- @ManyToOne//(cascade = CascadeType.ALL)
- @JoinColumn(name = "parent_user_id")
- private Parent parent;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_user_id")
+    @JsonIgnoreProperties({"children"})
+    private Parent parent;
 
-@OneToOne //(cascade = CascadeType.ALL)
-@JoinColumn(name = "medical_record_id")
-private MedicalRecord medicalRecord;
+    @OneToOne //(cascade = CascadeType.ALL)
+    @JoinColumn(name = "medical_record_id")
+      private MedicalRecord medicalRecord;
 
-    public Child() {
-    }
-public Child(Builder builder) {
+       public Child() {
+     }
+      public Child(Builder builder) {
         this.childId = builder.childId;
         this.identityNumber = builder.identityNumber;
         this.name = builder.name;
@@ -36,6 +38,7 @@ public Child(Builder builder) {
         this.dateOfBirth = builder.dateOfBirth;
         this.parent = builder.parent;
         this.medicalRecord = builder.medicalRecord;
+        this.profilePictureUrl = builder.profilePictureUrl;
 
 }
     public long getChildId() {
@@ -74,6 +77,10 @@ public Child(Builder builder) {
         return medicalRecord;
     }
 
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
     @Override
     public String toString() {
         return "Child{" +
@@ -99,6 +106,8 @@ public Child(Builder builder) {
         private LocalDate dateOfBirth;
         private Parent parent;
         private MedicalRecord medicalRecord;
+        private String profilePictureUrl;
+
 
         public Builder setChildId(long childId) {
             this.childId = childId;
@@ -143,6 +152,10 @@ public Child(Builder builder) {
             this.medicalRecord = medicalRecord;
             return this;
         }
+        public Builder setProfilePictureUrl(String profilePictureUrl) {
+            this.profilePictureUrl = profilePictureUrl;
+            return this;
+        }
 
         public Builder copy(Child child) {
             this.childId = child.getChildId();
@@ -154,6 +167,7 @@ public Child(Builder builder) {
             this.dateOfBirth = child.getDateOfBirth();
             this.parent = child.getParent();
             this.medicalRecord = child.getMedicalRecord();
+            this.profilePictureUrl = child.getProfilePictureUrl();
             return this;
         }
         public Child build() {
