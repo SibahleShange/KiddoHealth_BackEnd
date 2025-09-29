@@ -1,5 +1,6 @@
 package za.ac.cput.Domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -19,7 +20,8 @@ public class Child {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_user_id")
-    @JsonIgnoreProperties({"children"})
+//    @JsonIgnoreProperties({"children"})
+    @JsonBackReference
     private Parent parent;
 
     @OneToOne //(cascade = CascadeType.ALL)

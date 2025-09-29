@@ -1,6 +1,7 @@
 package za.ac.cput.Domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,14 +15,14 @@ public class Parent extends User {
     private String address;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("parent")
+//    @JsonIgnoreProperties("parent")
+    @JsonManagedReference
     private List<Child> children = new ArrayList<>();
 
     public Parent() {
-
     }
-public Parent(Builder builder) {
 
+public Parent(Builder builder) {
         this.address = builder.address;
         this.userId = builder.userId;
         this.name = builder.name;

@@ -64,7 +64,8 @@ public class ParentController {
         }
 
         // If passwords are stored plain (your current setup)
-        if (!parent.getPassword().equals(password) || !parent.getRole().toString().equalsIgnoreCase(role))  {
+        if (!parent.getPassword().equals(password) ||
+                !parent.getRole().name().equalsIgnoreCase(role)) {
             System.out.println("Password mismatch for email: " + email);
             throw new RuntimeException("Invalid credentials");
         }

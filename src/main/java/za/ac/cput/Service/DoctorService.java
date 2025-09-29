@@ -17,15 +17,14 @@ import java.util.Map;
 
 @Service
 public class DoctorService implements IDoctorService {
-  
- private  DoctorRepository doctorRepository;
+
+    private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Autowired
-    private AppointmentRepository appointmentRepository;
- 
-@Autowired
-    public DoctorService(DoctorRepository doctorRepository) {
+    public DoctorService(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
         this.doctorRepository = doctorRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @Override
@@ -42,6 +41,7 @@ public class DoctorService implements IDoctorService {
     public Doctor update(Doctor doctor) {
         return this.doctorRepository.save(doctor);
     }
+
     @Override
     public List<Doctor> getAll() {
         return this.doctorRepository.findAll();
@@ -54,14 +54,10 @@ public class DoctorService implements IDoctorService {
 
     @Override
     public Doctor updatePassword(Long userId, String newPassword) {
-        // Fetch doctor directly from repository
         Doctor doctor = doctorRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        // Update password
         doctor.setPassword(newPassword);
-
-        // Save changes directly
         return doctorRepository.save(doctor);
     }
 
@@ -75,17 +71,17 @@ public class DoctorService implements IDoctorService {
 
         // Today's appointment count
         dashboard.setTotalAppointmentsToday(
-                appointmentRepository.countByDoctorIdAndAppointmentDate(doctorId, today)
+                appointmentRepository.countByDoctor_UserIdAndAppointmentDate(doctorId, today)
         );
 
         // Upcoming appointments (scheduled)
         dashboard.setUpcomingAppointments(
-                appointmentRepository.countByDoctorIdAndStatus(doctorId, AppointmentStatus.SCHEDULED)
+                appointmentRepository.countByDoctor_UserIdAndStatus(doctorId, AppointmentStatus.SCHEDULED)
         );
 
         // Completed this week
         List<Appointment> weeklyAppointments = appointmentRepository
-                .findByDoctorIdAndAppointmentDateBetween(doctorId, startOfWeek, endOfWeek);
+                .findByDoctor_UserIdAndAppointmentDateBetween(doctorId, startOfWeek, endOfWeek);
 
         Long completedThisWeek = weeklyAppointments.stream()
                 .filter(app -> app.getStatus() == AppointmentStatus.COMPLETED)
@@ -94,13 +90,13 @@ public class DoctorService implements IDoctorService {
 
         // Today's appointments list
         dashboard.setTodaysAppointments(
-                appointmentRepository.findByDoctorIdAndAppointmentDateOrderByTimeSlotAsc(doctorId, today)
+                appointmentRepository.findByDoctor_UserIdAndAppointmentDateOrderByTimeSlotAsc(doctorId, today)
         );
 
         // Status distribution
         Map<AppointmentStatus, Long> statusMap = new HashMap<>();
         for (AppointmentStatus status : AppointmentStatus.values()) {
-            Long count = appointmentRepository.countByDoctorIdAndStatus(doctorId, status);
+            Long count = appointmentRepository.countByDoctor_UserIdAndStatus(doctorId, status);
             statusMap.put(status, count);
         }
         dashboard.setAppointmentsByStatus(statusMap);
@@ -110,7 +106,7 @@ public class DoctorService implements IDoctorService {
 
     @Override
     public List<Appointment> getTodaysAppointments(Long doctorId) {
-        return appointmentRepository.findByDoctorIdAndAppointmentDateOrderByTimeSlotAsc(
+        return appointmentRepository.findByDoctor_UserIdAndAppointmentDateOrderByTimeSlotAsc(
                 doctorId, LocalDate.now());
     }
 }
